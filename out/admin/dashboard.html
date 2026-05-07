@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Profile Listing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100">
+    <div class="flex h-screen">
+        <aside class="w-64 bg-gray-800 text-white">
+            <div class="p-4 text-xl font-bold">Profile Listing Admin</div>
+            <nav class="mt-4">
+                <a href="/admin/dashboard.html" class="block py-2 px-4 hover:bg-gray-700">Dashboard</a>
+                <a href="/admin/categories.html" class="block py-2 px-4 hover:bg-gray-700">Categories</a>
+                <a href="/admin/services.html" class="block py-2 px-4 hover:bg-gray-700">Services</a>
+                <a href="/admin/locations.html" class="block py-2 px-4 hover:bg-gray-700">Locations</a>
+                <a href="/admin/profiles.html" class="block py-2 px-4 hover:bg-gray-700">Profiles</a>
+            </nav>
+        </aside>
+        <main class="flex-1 overflow-auto">
+            <header class="bg-white shadow p-4">
+                <h1 class="text-2xl font-bold">Dashboard</h1>
+            </header>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-2">Total Profiles</h3>
+                        <p class="text-3xl font-bold text-pink-600" id="total-profiles">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-2">Categories</h3>
+                        <p class="text-3xl font-bold text-pink-600" id="total-categories">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-lg font-semibold mb-2">Locations</h3>
+                        <p class="text-3xl font-bold text-pink-600" id="total-locations">0</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        fetch('/api/profiles').then(r => r.json()).then(data => {
+            document.getElementById('total-profiles').textContent = data.length || 0;
+        });
+        fetch('/api/categories').then(r => r.json()).then(data => {
+            document.getElementById('total-categories').textContent = data.length || 0;
+        });
+        fetch('/api/locations').then(r => r.json()).then(data => {
+            document.getElementById('total-locations').textContent = data.length || 0;
+        });
+    </script>
+</body>
+</html>
