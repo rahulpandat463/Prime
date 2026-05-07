@@ -1,0 +1,6 @@
+# Next.js output
+RewriteEngine On
+RewriteRule ^(.*)$ http://localhost:3000/$1 [P,L]
+
+# For static export fallback
+FallbackResource /index.html
