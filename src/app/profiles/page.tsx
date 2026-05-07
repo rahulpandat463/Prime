@@ -1,144 +1,116 @@
-import pool from '@/lib/db';
 import Link from 'next/link';
 
-async function getAllProfiles() {
-  const [rows] = await pool.query(`
-    SELECT p.*, l.name as location_name, l.slug as location_slug, c.name as category_name
-    FROM profiles p
-    LEFT JOIN locations l ON p.location_id = l.id
-    LEFT JOIN categories c ON p.category_id = c.id
-    WHERE p.status = 'active'
-    ORDER BY p.is_featured DESC, p.created_at DESC
-  `);
-  return rows as any[];
-}
+// Mock Data for Static Frontend
+const mockProfiles = [
+  { id: 1, name: 'Ananya', slug: 'ananya', age: 23, location_name: 'Delhi', rating: 5.0, category_name: 'Independent' },
+  { id: 2, name: 'Neha', slug: 'neha', age: 24, location_name: 'Mumbai', rating: 4.9, category_name: 'Premium' },
+  { id: 3, name: 'Priya', slug: 'priya', age: 25, location_name: 'Bangalore', rating: 4.8, category_name: 'VIP' },
+  { id: 4, name: 'Kavya', slug: 'kavya', age: 27, location_name: 'Hyderabad', rating: 4.8, category_name: 'Independent' },
+  { id: 5, name: 'Riya', slug: 'riya', age: 26, location_name: 'Pune', rating: 4.7, category_name: 'College Girls' },
+  { id: 6, name: 'Isha', slug: 'isha', age: 22, location_name: 'Chennai', rating: 4.6, category_name: 'Independent' },
+];
 
-export const dynamic = 'force-dynamic';
-
-export default async function AllProfilesPage() {
-  const profiles = await getAllProfiles();
+export default function AllProfilesPage() {
+  const profiles = mockProfiles;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#0f0a15] pb-20 pt-24">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-16 mb-12">
+      <section className="bg-pink-600/10 border-y border-white/5 py-16 mb-12">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            All Verified Profiles
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tightest uppercase">
+            All Verified <span className="text-pink-600 italic">Profiles</span>
           </h1>
-          <p className="text-xl max-w-2xl mx-auto opacity-90">
-            Explore our complete directory of verified profiles with 100% genuine photos and reviews.
+          <p className="text-lg max-w-2xl mx-auto text-zinc-400 font-medium leading-relaxed">
+            Explore our complete directory of elite verified companions with 100% genuine photos and discreet service.
           </p>
         </div>
       </section>
 
       <div className="container mx-auto px-4 max-w-5xl">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">Showing {profiles.length} Profiles</h2>
-          <div className="flex gap-2">
-            {/* Sort/Filter could go here later */}
-          </div>
+        <div className="flex justify-between items-center mb-12">
+          <h2 className="text-xl font-black text-white uppercase tracking-widest">
+            Elite Selection ({profiles.length})
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 gap-8">
           {profiles.map((profile) => (
             <Link
               key={profile.id}
-              href={`/profile/${profile.slug}-${profile.id}`}
+              href={`/profile/${profile.slug}`}
               className="block group"
             >
-              <div className="bg-white border-2 border-pink-500 rounded-xl overflow-hidden flex flex-col md:flex-row transition hover:shadow-xl h-auto md:h-64">
+              <div className="bg-[#1a1325] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row transition-all duration-500 hover:border-pink-600/50 hover:shadow-[0_0_50px_rgba(219,39,119,0.1)] h-auto md:h-64">
                 {/* Image Section */}
                 <div className="relative w-full md:w-64 h-64 md:h-full flex-shrink-0">
-                  <div className="w-full h-full bg-pink-50 flex items-center justify-center text-3xl font-bold text-pink-600">
+                  <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-5xl font-black text-zinc-700 group-hover:scale-110 transition-transform duration-700">
                     {profile.name.charAt(0)}
                   </div>
                   
                   {/* PRO Banner */}
                   <div className="absolute top-0 left-0">
-                    <div className="bg-pink-600 text-white text-[10px] font-bold px-3 py-1 transform -rotate-45 -translate-x-4 translate-y-2 w-20 text-center shadow-md">
+                    <div className="bg-pink-600 text-white text-[10px] font-black px-4 py-1.5 transform -rotate-45 -translate-x-5 translate-y-3 w-24 text-center shadow-xl uppercase tracking-widest">
                       PRO
                     </div>
                   </div>
 
                   {/* Views Counter */}
-                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[11px] flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                  <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-xl border border-white/10 text-white px-3 py-1 rounded-full text-[10px] font-bold flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                     {(Math.random() * 5 + 1).toFixed(1)}K
                   </div>
 
-                  {/* Status Badges */}
-                  <div className="absolute bottom-10 right-2 flex flex-col gap-1 items-end">
-                    <div className="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Trusted
-                    </div>
-                    <div className="bg-green-500 text-white text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Verified
-                    </div>
-                  </div>
-
                   {/* Diamond Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-purple-700 text-white text-[10px] font-bold py-1 text-center flex items-center justify-center gap-1 uppercase">
-                    <span>💎</span> Diamond
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-purple-800 to-indigo-900 text-white text-[10px] font-black py-2 text-center flex items-center justify-center gap-1 uppercase tracking-widest">
+                    <span>💎</span> Elite Diamond
                   </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="flex-1 p-5 relative flex flex-col justify-between overflow-hidden">
+                <div className="flex-1 p-8 relative flex flex-col justify-between overflow-hidden">
                   <div>
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-xl font-bold text-gray-800 leading-tight mb-2 group-hover:text-pink-600 transition line-clamp-2">
-                        High Quality {profile.name} Service {profile.category_name || 'VIP'} Only Call And Whatsapp Me
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-2xl font-black text-white leading-tight group-hover:text-pink-500 transition-colors line-clamp-1">
+                        {profile.name} — Premium {profile.category_name}
                       </h3>
-                      <button className="text-gray-300 hover:text-red-500 transition flex-shrink-0 ml-2">
+                      <button className="text-zinc-700 hover:text-pink-600 transition-colors flex-shrink-0 ml-4">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                       </button>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      Premium {profile.name} service 24 hours genuine only call and WhatsApp me. High quality service with 100% satisfaction guaranteed.
+                    <p className="text-zinc-500 text-sm mb-4 line-clamp-2 font-medium">
+                      Exclusive {profile.name} service available for discerning clients. Genuine profiles with 100% satisfaction guaranteed and absolute discretion.
                     </p>
 
-                    <div className="flex items-center text-pink-600 font-medium text-sm mb-4">
-                      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="flex items-center text-pink-500 font-black text-xs uppercase tracking-[0.2em] mb-4">
+                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                       </svg>
                       {profile.location_name || 'India'}
                     </div>
 
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <div className="border border-pink-100 bg-pink-50 rounded px-2 py-1 text-[11px] text-pink-700 flex items-center gap-1">
-                        Female
+                      <div className="border border-white/5 bg-white/5 rounded-lg px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                        {profile.age}y
                       </div>
-                      <div className="border border-purple-100 bg-purple-50 rounded px-2 py-1 text-[11px] text-purple-700 flex items-center gap-1">
-                        {profile.age || 22}y
-                      </div>
-                      <div className="border border-gray-100 bg-gray-50 rounded px-2 py-1 text-[11px] text-gray-700 flex items-center gap-1">
-                        Indian
+                      <div className="border border-white/5 bg-white/5 rounded-lg px-3 py-1 text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                        Verified
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-2 mt-auto">
-                    <div className="bg-gradient-to-r from-pink-500 to-purple-600 text-white p-2 rounded-full shadow-md hover:shadow-lg transition">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  <div className="flex justify-end gap-3 mt-auto">
+                    <div className="bg-zinc-800 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-xl hover:bg-pink-600 transition-all duration-500 group/btn">
+                      <svg className="w-5 h-5 transform group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </div>
-                    <div className="bg-green-500 text-white p-2 rounded-full shadow-md hover:bg-green-600 transition">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.483 8.413-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.308 1.655zm6.241-3.515l.347.206c1.472.873 3.167 1.334 4.895 1.335h.005c5.64 0 10.23-4.59 10.233-10.23.001-2.731-1.062-5.3-3.003-7.234-1.942-1.936-4.512-3.004-7.241-3.005-5.641 0-10.23 4.59-10.233 10.23-.001 1.832.486 3.619 1.408 5.187l.226.386-1.008 3.682 3.771-.989zm11.222-7.854c-.267-.134-1.583-.781-1.828-.871-.246-.09-.425-.134-.604.134-.179.268-.692.871-.848 1.05-.156.179-.312.201-.579.067-.267-.134-1.129-.416-2.15-1.328-.795-.71-1.332-1.587-1.488-1.855-.156-.268-.017-.413.117-.546.12-.12.267-.312.401-.469.134-.156.179-.268.267-.446.089-.179.045-.335-.022-.469-.067-.134-.604-1.451-.826-1.986-.216-.522-.435-.452-.604-.46l-.513-.008c-.179 0-.469.067-.714.335-.246.268-.938.916-.938 2.232 0 1.316.96 2.589 1.094 2.768.134.179 1.888 2.883 4.574 4.043.64.276 1.139.44 1.526.563.641.204 1.224.175 1.685.107.514-.077 1.583-.647 1.806-1.272.223-.625.223-1.161.156-1.272-.067-.111-.245-.178-.512-.312z" />
+                    <div className="bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-xl hover:bg-emerald-500 transition-all duration-500 group/btn">
+                      <svg className="w-5 h-5 transform group-hover/btn:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                       </svg>
                     </div>
                   </div>

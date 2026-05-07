@@ -1,5 +1,3 @@
-import { Suspense } from 'react';
-import pool from '@/lib/db';
 import HeroSection from '@/components/HeroSection';
 import CategoriesSection from '@/components/CategoriesSection';
 import FeaturedProfiles from '@/components/FeaturedProfiles';
@@ -11,77 +9,75 @@ import HowItWorksSection from '@/components/HowItWorksSection';
 import LocationsSection from '@/components/LocationsSection';
 import Footer from '@/components/Footer';
 
-async function getHomeData() {
-  const [categories] = await pool.query(
-    'SELECT id, name, slug, description FROM categories WHERE status = "active" ORDER BY sort_order ASC, name ASC LIMIT 6'
-  );
+// Mock Data for Static Frontend
+const mockData = {
+  categories: [
+    { id: 1, name: 'Independent', slug: 'independent', description: 'Premium independent profiles' },
+    { id: 2, name: 'Premium', slug: 'premium', description: 'Elite high-end companions' },
+    { id: 3, name: 'VIP', slug: 'vip', description: 'World-class VIP services' },
+    { id: 4, name: 'College Girls', slug: 'college-girls', description: 'Young and energetic companions' },
+    { id: 5, name: 'Celebrity', slug: 'celebrity', description: 'Exclusive celebrity escorts' },
+    { id: 6, name: 'Call Girls', slug: 'call-girls', description: 'Verified local call girls' },
+  ],
+  featuredProfiles: [
+    { id: 1, name: 'Ananya', slug: 'ananya', age: 23, location_name: 'Delhi', rating: 5.0 },
+    { id: 2, name: 'Neha', slug: 'neha', age: 24, location_name: 'Mumbai', rating: 4.9 },
+    { id: 3, name: 'Priya', slug: 'priya', age: 25, location_name: 'Bangalore', rating: 4.8 },
+    { id: 4, name: 'Kavya', slug: 'kavya', age: 27, location_name: 'Hyderabad', rating: 4.8 },
+  ],
+  newProfiles: [
+    { id: 5, name: 'Riya', slug: 'riya', age: 26, location_name: 'Pune', rating: 4.7 },
+    { id: 6, name: 'Isha', slug: 'isha', age: 22, location_name: 'Chennai', rating: 4.6 },
+    { id: 7, name: 'Sana', slug: 'sana', age: 24, location_name: 'Kolkata', rating: 4.5 },
+  ],
+  testimonials: [
+    { id: 1, name: 'Rahul', location: 'Mumbai', content: 'Incredible experience, very professional.', rating: 5 },
+    { id: 2, name: 'Amit', location: 'Delhi', content: 'Best service I have ever used. Highly recommend.', rating: 5 },
+    { id: 3, name: 'Vikram', location: 'Bangalore', content: 'Very discreet and high quality profiles.', rating: 5 },
+  ],
+  faqs: [
+    { id: 1, question: 'How do I book a companion?', answer: 'You can contact the companion directly via the phone number or WhatsApp link provided on their profile.' },
+    { id: 2, question: 'Are the photos genuine?', answer: 'Yes, all our profiles are verified and we ensure that the photos are 100% genuine.' },
+  ],
+  services: [
+    { id: 1, name: 'Massage', slug: 'massage' },
+    { id: 2, name: 'Dinner Date', slug: 'dinner-date' },
+    { id: 3, name: 'Travel Companion', slug: 'travel' },
+  ],
+  locations: [
+    { id: 1, name: 'Delhi', slug: 'delhi' },
+    { id: 2, name: 'Mumbai', slug: 'mumbai' },
+    { id: 3, name: 'Bangalore', slug: 'bangalore' },
+    { id: 4, name: 'Hyderabad', slug: 'hyderabad' },
+    { id: 5, name: 'Pune', slug: 'pune' },
+    { id: 6, name: 'Chennai', slug: 'chennai' },
+  ]
+};
 
-  const [featuredProfiles] = await pool.query(`
-    SELECT p.*, l.name as location_name, l.slug as location_slug, 
-           c.name as category_name
-    FROM profiles p
-    LEFT JOIN locations l ON p.location_id = l.id
-    LEFT JOIN categories c ON p.category_id = c.id
-    WHERE p.status = 'active' AND p.is_featured = 1
-    ORDER BY p.rating DESC, p.created_at DESC
-    LIMIT 8
-  `);
-
-  const [newProfiles] = await pool.query(`
-    SELECT p.*, l.name as location_name, l.slug as location_slug
-    FROM profiles p
-    LEFT JOIN locations l ON p.location_id = l.id
-    WHERE p.status = 'active'
-    ORDER BY p.created_at DESC
-    LIMIT 6
-  `);
-
-  const [testimonials] = await pool.query(
-    'SELECT id, name, location, content, rating FROM testimonials WHERE status = "active" ORDER BY sort_order ASC LIMIT 6'
-  );
-
-  const [faqs] = await pool.query(
-    'SELECT id, question, answer FROM faqs WHERE status = "active" ORDER BY sort_order ASC LIMIT 5'
-  );
-
-  const [services] = await pool.query(
-    'SELECT id, name, slug FROM services WHERE status = "active" ORDER BY sort_order ASC'
-  );
-
-  const [locations] = await pool.query(
-    'SELECT id, name, slug FROM locations WHERE type = "city" AND status = "active" ORDER BY sort_order ASC'
-  );
-
-  return { categories, featuredProfiles, newProfiles, testimonials, faqs, services, locations };
-}
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
-
-export default async function HomePage() {
-  const { categories, featuredProfiles, newProfiles, testimonials, faqs, services, locations } = await getHomeData();
+export default function HomePage() {
+  const { categories, featuredProfiles, newProfiles, testimonials, faqs, services, locations } = mockData;
 
   return (
     <>
       <HeroSection />
 
-      <PopularProfiles profiles={featuredProfiles as any[]} />
+      <PopularProfiles profiles={featuredProfiles} />
 
-      <CategoriesSection categories={categories as any[]} />
+      <CategoriesSection categories={categories} />
 
-      <FeaturedProfiles profiles={newProfiles as any[]} title="Newly Added Profiles" />
+      <FeaturedProfiles profiles={newProfiles} title="Newly Added Profiles" />
 
-      <ServicesSection services={services as any[]} />
+      <ServicesSection services={services} />
 
       <HowItWorksSection />
 
-      <TestimonialsSection testimonials={testimonials as any[]} />
+      <TestimonialsSection testimonials={testimonials} />
 
-      <FaqsSection faqs={faqs as any[]} />
+      <FaqsSection faqs={faqs} />
 
-      <LocationsSection locations={locations as any[]} />
+      <LocationsSection locations={locations} />
 
-      <Footer locations={locations as any[]} categories={categories as any[]} services={services as any[]} />
+      <Footer locations={locations} categories={categories} services={services} />
     </>
   );
 }

@@ -1,93 +1,34 @@
-import pool from '@/lib/db';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
-async function getCategory(slug: string) {
-  const [rows] = await pool.query(
-    'SELECT * FROM categories WHERE slug = ? AND status = "active"',
-    [slug]
-  );
-  return (rows as any[])[0];
+// Mock Params
+const mockParams = [
+  { slug: 'independent', location: 'delhi' },
+  { slug: 'premium', location: 'mumbai' },
+];
+
+export async function generateStaticParams() {
+  return mockParams;
 }
 
-async function getLocation(slug: string) {
-  const [rows] = await pool.query(
-    'SELECT * FROM locations WHERE slug = ? AND status = "active"',
-    [slug]
-  );
-  return (rows as any[])[0];
-}
-
-async function getProfilesByCategoryLocation(categoryId: number, locationId: number) {
-  const [rows] = await pool.query(`
-    SELECT p.*, l.name as location_name, l.slug as location_slug
-    FROM profiles p
-    LEFT JOIN locations l ON p.location_id = l.id
-    WHERE p.category_id = ? AND p.location_id = ? AND p.status = 'active'
-    ORDER BY p.is_featured DESC, p.rating DESC
-    LIMIT 12
-  `, [categoryId, locationId]);
-  return rows as any[];
-}
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 3600;
-
-export async function generateMetadata({ params }: { params: { slug: string, location: string } }) {
-  const category = await getCategory(params.slug);
-  const location = await getLocation(params.location);
-  
-  if (!category || !location) {
-    return { title: 'Not Found' };
-  }
-
-  return {
-    title: `${category.name} in ${location.name} | Verified Profiles`,
-    description: `Find top ${category.name.toLowerCase()} profiles in ${location.name}.`,
-  };
-}
-
-export default async function CategoryLocationPage({ params }: { params: { slug: string, location: string } }) {
-  const category = await getCategory(params.slug);
-  const location = await getLocation(params.location);
-  
-  if (!category || !location) {
-    notFound();
-  }
-
-  const profiles = await getProfilesByCategoryLocation(category.id, location.id);
-
+export default function CategoryLocationPage({ params }: { params: { slug: string, location: string } }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <section className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-20">
+    <div className="min-h-screen bg-[#0f0a15] pb-20 pt-24">
+      <section className="bg-pink-600/10 border-y border-white/5 py-16 mb-12">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            {category.name} in {location.name}
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tightest uppercase">
+            {params.slug} in <span className="text-pink-600 italic">{params.location}</span>
           </h1>
+          <p className="text-lg max-w-2xl mx-auto text-zinc-400 font-medium leading-relaxed text-capitalize">
+            Premium {params.slug} profiles available in {params.location}.
+          </p>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-4">Profiles ({profiles.length})</h2>
-        {profiles.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {profiles.map((profile) => (
-              <Link
-                key={profile.id}
-                href={`/profile/${profile.slug}-${profile.id}`}
-                className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl"
-              >
-                <div className="h-48 bg-gray-200"></div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg">{profile.name}</h3>
-                  <p className="text-gray-600">{profile.location_name}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="text-gray-600">No profiles found.</p>
-        )}
+      <div className="container mx-auto px-4 text-center py-20">
+        <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-10">Coming Soon</h2>
+        <Link href="/profiles" className="text-pink-500 font-black uppercase tracking-widest hover:underline">
+          View All Profiles
+        </Link>
       </div>
     </div>
   );
